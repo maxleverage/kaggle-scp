@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import hashlib
 
-working_directory = os.getcwd() + '/Output' # Where files will be saved to
+working_directory = os.getcwd() + '/Output'
 os.chdir(working_directory)
 
 # 80 models
@@ -112,7 +112,6 @@ else:
 	# Calculate weights
 	weights = scores / np.sum(scores)
 
-# Finish LB error weighting tomorrow
 for i in range(n_models):
 	if i == 0:
 		model = pd.read_csv(models_list[i])
@@ -125,7 +124,7 @@ for i in range(n_models):
 ensembled = model
 ensembled.iloc[:, 1:] = average_model
 
-# Save averaged model
+# Hash for averaged model
 truncated_hash = hashlib.sha256(os.urandom(23)).hexdigest()[:23]
 print(truncated_hash)
 

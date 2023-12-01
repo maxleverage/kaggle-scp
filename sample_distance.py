@@ -10,11 +10,6 @@ import numpy as np
 import pandas as pd
 import warnings
 
-# Set random seeds
-np.random.seed(8)
-tf.random.set_seed(8)
-
-# Training path to training data containing molecules
 # Load in training data
 train_path = os.getcwd() + '/Data/de_train.parquet'
 df_train = pd.read_parquet(train_path)
@@ -28,10 +23,6 @@ def cosine_similarity(y_true, y_pred):
 	return np.mean(-K.eval(keras.losses.cosine_similarity(y_true, y_pred, axis=1)))
 
 # Define correlation
-def correlation(y_true, y_pred):
-	cov = np.sum((y_true - np.mean(y_true, axis=1, keepdims=True)) * (y_pred - np.mean(y_pred, axis=1, keepdims=True)), axis=1)
-	return np.mean(cov / (np.std(y_true, axis=1) * np.std(y_pred, axis=1)))
-
 def correlation(y_true, y_pred):
 	corr_vals = []
 	for i in range(y_true.shape[0]):
@@ -111,19 +102,6 @@ for cell in key_list:
 for cell in key_list:
 	cell_dist[cell] = np.mean(cell_dist[cell]) / 1
 
-# Original distance
-# Frobenius norm (lower is better)
-# {'NK cells': 0.21467228237641098, 'T cells CD8+': 0.2556509010620869, 'T cells CD4+': 0.30491281735005693, 'T regulatory cells': 0.3626042920870479}
-
-# rwrmse (lower is better)
-# {'NK cells': 0.2759306891490556, 'T cells CD8+': 0.2913196962994828, 'T cells CD4+': 0.3517848205673421, 'T regulatory cells': 0.38328229392725627}
-
-# Cosine similarity (higher is better)
-# {'NK cells': 0.3198791742324829, 'T cells CD8+': 0.05635642260313034, 'T cells CD4+': 0.24452143907546997, 'T regulatory cells': 0.21414318680763245}
-
-# Correlation (higher is better)
-# {'T regulatory cells': 0.18381344034627672, 'NK cells': 0.2998106801542936, 'T cells CD4+': 0.2307402243632951, 'T cells CD8+': 0.06346653222950861}
-
 # Calculuate by inverse log
 base = 1.5
 for cell in key_list:
@@ -132,26 +110,6 @@ for cell in key_list:
 # Calculate distance from 1.
 for cell in key_list:
 	cell_dist[cell] = 1 - cell_dist[cell]
-
-# Paste directly into model
-# Log base 1.5 distance
-# {'T regulatory cells': 0.6518986684331918, 'T cells CD8+': 0.7203918421401994, 'NK cells': 0.7519447057731612, 'T cells CD4+': 0.6866328017001024}
-
-# Paste directly into model
-# Frobenius norm distance subtracted from 1.
-# {'NK cells': 0.785327717623589, 'T cells CD8+': 0.7443490989379131, 'T cells CD4+': 0.6950871826499431, 'T regulatory cells': 0.6373957079129521}
-
-# Paste directly into model
-# rwrmse distance subtracted from 1.
-# {'NK cells': 0.7240693108509444, 'T cells CD8+': 0.7086803037005172, 'T cells CD4+': 0.6482151794326578, 'T regulatory cells': 0.6167177060727438}
-
-# Paste directly into model
-# Cosine similarity, no need for subtraction
-# {'NK cells': 0.3198791742324829, 'T cells CD8+': 0.05635642260313034, 'T cells CD4+': 0.24452143907546997, 'T regulatory cells': 0.21414318680763245}
-
-# Paste directly into model
-# Correlation, no need for subtraction
-# {'T regulatory cells': 0.18381344034627672, 'NK cells': 0.2998106801542936, 'T cells CD4+': 0.2307402243632951, 'T cells CD8+': 0.06346653222950861}
 
 # Cell type numbers
 cell_type_num = {'B cells': 17., 'Myeloid cells': 17., 'T regulatory cells': 146., 'T cells CD8+': 142, 'NK cells': 146., 'T cells CD4+': 146.}

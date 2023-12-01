@@ -1,34 +1,12 @@
-# Custom loss functions for model output
-
 import math as m
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 import keras.backend as K
 
-# Element wise binary-crossentropy
-# K.binary_crossentropy(target_label, predicted_probability), do not switch order around
-def binary_crossentropy_element(y_true, y_pred):
-	return K.mean(K.binary_crossentropy(y_true,y_pred))
-
 # Row wise RMSE
 def rwrmse(y_true, y_pred):
 	return tf.reduce_mean(K.pow(tf.reduce_mean(K.pow(y_true - y_pred, 2), axis=1), 0.5), axis=-1)
-
-def weighted_rwrmse(y_true, y_pred, weights):
-	return tf.reduce_mean(K.pow(tf.reduce_mean(K.pow(y_true - y_pred, 2), axis=1), 0.5) * weights, axis=-1)
-
-# Cubic hinge
-def cubic_hinge(y_true, y_pred):
-	return tf.reduce_mean(K.pow(1 - y_pred * y_true, 3))
-
-# Custom square hinge
-def custom_square_hinge(y_true, y_pred):
-	return tf.reduce_mean(1 - y_pred * y_true, 2)
-
-# MSE loss for classification
-def mse_binary(y_true, y_pred):
-	return tf.reduce_mean(K.pow(1 - y_true * y_pred, 2))
 
 # Custom logistic loss
 def logistic_loss(y_true, y_pred):
@@ -37,14 +15,6 @@ def logistic_loss(y_true, y_pred):
 # Exponential sign loss 
 def exp_sign(y_true, y_pred):
 	return tf.reduce_mean(K.exp(-(y_true * y_pred)))
-
-# Shifted tanh loss
-def tanh_shifted(y_true, y_pred):
-	margin = 0.0
-	C = 1.0
-	# Product of ground truth and pred
-	exponent = margin - (y_true * y_pred)
-	return tf.reduce_mean((K.exp(exponent) - K.exp(-exponent)) / (K.exp(exponent) + K.exp(-exponent)) + C)
 
 # Cosine dis-similarity
 def rw_cosine_dissimilarity(y_true, y_pred):
